@@ -47,6 +47,7 @@ module VagrantPlugins
             hostname: hostname,
             ssh_key_name: Action::SetupSSHKey::NAME
           }
+          $stdout.printf("Final attributes for create_server: %s\n", attributes)
           @machine.id = @client.create_server(attributes)
 
           env[:ui].info 'Waiting for subcription to become active...'
