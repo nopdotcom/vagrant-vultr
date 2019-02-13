@@ -29,7 +29,15 @@ module VagrantPlugins
       end
 
       def finalize!
-        @token = ENV['VULTR_TOKEN'] if @token == UNSET_VALUE
+        key = @token
+        if key == UNSET_VALUE then
+          key = ENV.fetch('VULTR_TOKEN', UNSET_VALUE)
+        end
+        if key == UNSET_VALUE then
+          key = ENV.fetch('VULTR_API_KEY')
+        end
+        @token = key
+
         @region = 'Seattle' if @region == UNSET_VALUE
         @os = 'Ubuntu 14.04 x64' if @os == UNSET_VALUE && @snapshot == UNSET_VALUE
         @plan = '1024 MB RAM,25 GB SSD,1.00 TB BW' if @plan == UNSET_VALUE
