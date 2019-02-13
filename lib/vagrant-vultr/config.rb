@@ -37,7 +37,7 @@ module VagrantPlugins
         @enable_ipv6 = 'no' if @enable_ipv6 == UNSET_VALUE
         @enable_private_network = 'no' if @enable_private_network == UNSET_VALUE
         @label    = '' if @label    == UNSET_VALUE
-        @tag      = '' if @tag      == UNSET_VALUE
+        @tag      = 'vagrant' if @tag      == UNSET_VALUE
         @hostname = '' if @hostname == UNSET_VALUE
       end
 
