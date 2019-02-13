@@ -32,7 +32,7 @@ module VagrantPlugins
         @token = ENV['VULTR_TOKEN'] if @token == UNSET_VALUE
         @region = 'Seattle' if @region == UNSET_VALUE
         @os = 'Ubuntu 14.04 x64' if @os == UNSET_VALUE && @snapshot == UNSET_VALUE
-        @plan = '768 MB RAM,15 GB SSD,1.00 TB BW' if @plan == UNSET_VALUE
+        @plan = '1024 MB RAM,25 GB SSD,1.00 TB BW' if @plan == UNSET_VALUE
         @snapshot = nil if @snapshot == UNSET_VALUE
         @enable_ipv6 = 'no' if @enable_ipv6 == UNSET_VALUE
         @enable_private_network = 'no' if @enable_private_network == UNSET_VALUE
