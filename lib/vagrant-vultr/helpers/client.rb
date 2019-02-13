@@ -1,5 +1,7 @@
 require 'vultr'
 require 'vagrant/util/retryable'
+require 'limiter'
+
 
 module VagrantPlugins
   module Vultr
@@ -38,12 +40,11 @@ module VagrantPlugins
             DCID: region_id(attributes[:region]),
             VPSPLANID: vps_plan_id(attributes[:plan]),
             SSHKEYID: ssh_key_id(attributes[:ssh_key_name]),
-            enable_ipv6: attributes[:enable_ipv6],
-            enable_private_network: attributes[:enable_private_network],
-            label:    attributes[:label],
-            tag:      attributes[:tag],
-            hostname: attributes[:hostname]
           }
+
+          [:enable_ipv6, :enable_private_network, :label, :tag, :hostname].each do |k|
+            params[k] = attributes[k]
+          end
 
           if attributes[:snapshot]
             params.merge!(OSID: os_id('Snapshot'), SNAPSHOTID: attributes[:snapshot])
@@ -138,11 +139,14 @@ module VagrantPlugins
 
         private
 
-        def request
-          if interval = ENV['VULTR_RATE_LIMIT_INTERVAL_MS']
-            sleep interval.to_f / 1000
-          end
+        # FIXME this should be an instance variable
+        QUEUE = Limiter::RateQueue.new(2, interval: 1)
 
+        def request
+          # interval = ENV.fetch('VULTR_RATE_LIMIT_INTERVAL_MS', 500)
+          # $stdout.print("sleeping\n")
+          # sleep interval.to_f / 1000
+          QUEUE.shift
           response = yield
           if response[:status] != 200
             raise "API request failed: #{response[:result]}."

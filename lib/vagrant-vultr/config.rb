@@ -11,6 +11,7 @@ module VagrantPlugins
       attr_accessor :label
       attr_accessor :tag
       attr_accessor :hostname
+      attr_accessor :default_name
 
       # @api private
       attr_accessor :ssh_key_id
@@ -29,16 +30,31 @@ module VagrantPlugins
       end
 
       def finalize!
-        @token = ENV['VULTR_TOKEN'] if @token == UNSET_VALUE
+
+        # This is not idiomatic Ruby.
+        api_key = @token
+        if api_key == UNSET_VALUE then
+          api_key = ENV.fetch('VULTR_TOKEN', UNSET_VALUE)
+        end
+        if api_key == UNSET_VALUE then
+          # VULTR_API_KEY is the convention that Ansible follows
+          api_key = ENV.fetch('VULTR_API_KEY')
+        end
+        @token = api_key
+
+
         @region = 'Seattle' if @region == UNSET_VALUE
         @os = 'Ubuntu 14.04 x64' if @os == UNSET_VALUE && @snapshot == UNSET_VALUE
-        @plan = '768 MB RAM,15 GB SSD,1.00 TB BW' if @plan == UNSET_VALUE
+        @plan = '1024 MB RAM,25 GB SSD,1.00 TB BW' if @plan == UNSET_VALUE
         @snapshot = nil if @snapshot == UNSET_VALUE
         @enable_ipv6 = 'no' if @enable_ipv6 == UNSET_VALUE
         @enable_private_network = 'no' if @enable_private_network == UNSET_VALUE
-        @label    = '' if @label    == UNSET_VALUE
-        @tag      = '' if @tag      == UNSET_VALUE
-        @hostname = '' if @hostname == UNSET_VALUE
+        @tag      = 'vagrant' if @tag      == UNSET_VALUE
+
+        # SPECIAL CASE
+        # If we don't have a hostname or label, use nil; the create action will find a default name
+        @hostname = nil if @hostname == UNSET_VALUE
+        @label    = nil if @label    == UNSET_VALUE
       end
 
       def validate(machine)
