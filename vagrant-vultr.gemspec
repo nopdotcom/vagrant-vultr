@@ -16,6 +16,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = %w[lib]
 
   spec.add_dependency 'vultr', '~> 0.3.5'
+  spec.add_dependency 'ruby-limiter'
 
   spec.add_development_dependency 'aruba'
   spec.add_development_dependency 'pry'

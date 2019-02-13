@@ -9,7 +9,7 @@ module VagrantPlugins
         Config
       end
 
-      provider(:vultr) do
+      provider(:vultr, parallel: true) do
         require_relative 'provider'
         Provider
       end
